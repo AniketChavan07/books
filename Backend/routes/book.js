@@ -66,4 +66,44 @@ catch(error){
   }
 })
 
+// get- books 
+router.get("/get-book",async(req,res)=>{
+try{
+    const books= await Book.find().sort({createdAt:-1});// get all books and sort them by createdAt in descending order
+    return res.json({status:"success",data:books});// return the books in the response
+   
+
+}
+catch(error){
+    console.error(error);
+    return res.status(500).json({message:"Internal server error"});
+  }
+})
+//get recently add books
+router.get("/get-recent-book",async(req,res)=>{
+try{
+    const books= await Book.find().sort({createdAt:-1}).limit(4);// get all books and sort them by createdAt in descending order, limiting to 4 most recent
+    return res.json({status:"success",data:books});// return the books in the response
+   
+
+}
+catch(error){
+    console.error(error);
+    return res.status(500).json({message:"Internal server error"});
+  }
+})
+//get book by id
+router.get("/get-book-id/:id",async(req,res)=>{
+try{
+  const {id}=req.params;// get the id from the params
+    const books= await Book.findById(id);// get the book by id
+    return res.json({status:"success",data:books});// return the books in the response
+   
+
+}
+catch(error){
+    console.error(error);
+    return res.status(500).json({message:"Internal server error"});
+  }
+})
 module.exports = router;
