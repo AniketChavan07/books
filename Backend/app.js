@@ -14,6 +14,8 @@ const Books = require("./routes/book");
 const favourite = require("./routes/favourite");
 const cart = require("./routes/cart");
 const order = require("./routes/order");
+const cors = require("cors");
+app.use(cors()); // Enable CORS for all routes
 app.use("/api/v1", user);
 app.use("/api/v1", Books);
 app.use("/api/v1", favourite);
