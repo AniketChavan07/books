@@ -3,7 +3,12 @@ import Home from './pages/Home'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-import RecentlyAdd from './components/home/RecentlyAdd'
+import AllBooks from './pages/AllBooks'
+import Cart from './pages/Cart'
+import Profile from './pages/Profile'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import BookDetails from './components/viewbookdetails/BookDetails'
 
 export default function App() {
   return (
@@ -12,11 +17,12 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/allbooks" element={<h1>All Books Page</h1>} />
-        <Route path="/cart" element={<h1>Cart Page</h1>} />
-        <Route path="/profile" element={<h1>Profile Page</h1>} />
-        <Route path="/login" element={<h1>Login Page</h1>} />
-        <Route path="/signup" element={<h1>Sign Up Page</h1>} />
+        <Route path="/allbooks" element={ <AllBooks />} />
+        <Route path="/cart" element={<Cart/>} />
+        <Route path="/profile" element={<Profile/>} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/signup" element={<Signup/>} />
+        <Route path="/book/:id" element={<BookDetails />} />
       </Routes>
       <Footer />
 
