@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import {authActions} from "../store/auth"; // Corrected import path
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux"; // Corrected import from 'react-redux' to 'useDispatch'
 export default function Login() {
   const [name, setName] = useState(""); // ✅ Fixed here
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
+  const dispatch=useDispatch();
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -15,11 +16,16 @@ export default function Login() {
         name,
         password,
       });
-
+      dispatch(authActions.login({
+        token: res.data.token,  
+        id: res.data.id,
+        name: res.data.name,
+      }));
+      dispatch(authActions.changeRole(response.data.role)) ;// Dispatching login action with user data
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("id", res.data.id);
-        navigate("/");
+        navigate("/profile"); // Redirect to profile page after successful login
       } else {
         alert("Login failed. Please check your credentials.");
       }
