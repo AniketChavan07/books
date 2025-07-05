@@ -13,7 +13,6 @@ import BookDetails from './components/viewbookdetails/BookDetails'
 export default function App() {
   return (
     <div>
-       <Router>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -26,7 +25,7 @@ export default function App() {
       </Routes>
       <Footer />
 
-        </Router>
+      
 
     </div>
   )

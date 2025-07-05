@@ -5,7 +5,7 @@ import axios from "axios";
 export default function BookDetails() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const [loading, setLoading] = useState(true); // Track loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -25,7 +25,7 @@ export default function BookDetails() {
       <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-white">
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-lg">Loading book details...</p>
+          <p className="mt-4 text-lg font-medium">Loading book details...</p>
         </div>
       </div>
     );
@@ -33,33 +33,37 @@ export default function BookDetails() {
 
   if (!book) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white bg-zinc-900">
-        <p>Book not found.</p>
+      <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-white">
+        <p className="text-xl">Book not found.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 p-8 text-white">
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="min-h-screen bg-zinc-900 px-6 md:px-20 py-10 text-white">
+      <div className="flex flex-col md:flex-row gap-10 items-start">
         {/* Left: Book Image */}
-        <div className="md:w-3/6 w-full">
+        <div className="md:w-1/2 w-full rounded-lg overflow-hidden shadow-xl">
           <img
             src={book.url}
             alt={book.title}
-            className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+            className="w-50px h-[450px] object-cover rounded-lg"
           />
         </div>
 
         {/* Right: Book Details */}
-        <div className="md:w-3/6 w-full flex flex-col gap-4">
-          <h1 className="text-4xl font-bold">{book.title}</h1>
-          <p className="text-lg text-gray-300">By {book.author}</p>
-          <p className="text-md text-gray-400">{book.description}</p>
-          <p className="text-green-400 text-xl font-semibold">
-            Price: ₹{book.price}
+        <div className="md:w-1/2 w-full flex flex-col gap-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white">
+            {book.title}
+          </h1>
+          <p className="text-lg text-gray-300">by <span className="text-white font-medium">{book.author}</span></p>
+          <p className="text-base text-gray-400 leading-relaxed">
+            {book.description}
           </p>
-          <p className="text-gray-400">Language: {book.language}</p>
+          <p className="text-green-400 text-2xl font-semibold mt-4">
+            ₹{book.price}
+          </p>
+          <p className="text-gray-400 text-sm">Language: {book.language}</p>
         </div>
       </div>
     </div>

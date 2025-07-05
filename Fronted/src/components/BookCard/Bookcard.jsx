@@ -9,7 +9,7 @@ export default function Bookcard({ data }) {
       <img
         src={data.url}
         alt={data.title}
-        className="w-full h-[25vh] object-cover rounded-md"
+        className="w-60px h-[25vh] object-cover rounded-md justify-center mx-auto mb-2"
       />
 
       {/* Book details */}

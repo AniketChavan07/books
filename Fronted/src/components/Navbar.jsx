@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-
+import { useSelector} from "react-redux"; // Corrected import from 'react-redux' to 'useSelectors'
+// import { useDispatch } from "react-redux"; // Uncomment if you need to dispatch actions
+// import { useSelector } from "react-redux";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -9,7 +11,12 @@ export default function Navbar() {
     { title: "Cart", link: "/cart" },
     { title: "Profile", link: "/profile" },
   ];
-
+   const isLoggedIn= useSelector(state => state.auth.isLoggedIn);
+   if(isLoggedIn==false){
+    links.splice(2,2); // Remove Cart and Profile links if user is logged in
+  } 
+  // const role = useSelector((state) => state.auth.role);
+  // const user = useSelector((state) => state.auth.user);
   return (
     <nav className="bg-zinc-800 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
