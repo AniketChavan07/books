@@ -14,21 +14,35 @@ export default function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    // Optional client-side validation
+    if (user.password.length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
+
     try {
-      await axios.post("http://localhost:3002/api/v1/sign-up", user);
-      alert("Signup successful. Please login.");
-      navigate("/login");
+      console.log("Sending user data:", user); // Debug log
+      const res = await axios.post("http://localhost:3002/api/v1/sign-up", user);
+
+      if (res.status === 200 || res.status === 201) {
+        alert("Signup successful. Please login.");
+        navigate("/login");
+      } else {
+        alert("Signup failed. Please try again.");
+      }
     } catch (err) {
-      console.error("Signup error:", err);
-      alert("Signup failed. Please try again.");
+      console.error("Signup error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Signup failed. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-white">
       <form onSubmit={handleSignup} className="bg-zinc-800 p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Signup</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
 
+        {/* Name Field */}
         <label className="block mb-2">Name</label>
         <input
           type="text"
@@ -38,6 +52,7 @@ export default function Signup() {
           required
         />
 
+        {/* Email Field */}
         <label className="block mb-2">Email</label>
         <input
           type="email"
@@ -47,6 +62,7 @@ export default function Signup() {
           required
         />
 
+        {/* Password Field */}
         <label className="block mb-2">Password</label>
         <input
           type="password"
@@ -56,6 +72,7 @@ export default function Signup() {
           required
         />
 
+        {/* Address Field */}
         <label className="block mb-2">Address</label>
         <textarea
           value={user.address}
@@ -65,16 +82,22 @@ export default function Signup() {
           required
         />
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
         >
           Sign Up
         </button>
+
+        {/* Redirect to login */}
+        <p className="mt-4 text-center text-sm text-gray-400">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-400 hover:underline">
+            Login here
+          </a>
+        </p>
       </form>
     </div>
   );
 }
-// This code defines a Signup component that allows users to register by providing their name, email, password, and address.
-// It uses React's useState hook to manage form state and axios to send a POST request to the backend API for user registration.
-// Upon successful signup, it alerts the user and redirects them to the login page.

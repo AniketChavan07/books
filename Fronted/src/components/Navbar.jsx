@@ -1,22 +1,19 @@
 import React, { useState } from "react";
-import { useSelector} from "react-redux"; // Corrected import from 'react-redux' to 'useSelectors'
-// import { useDispatch } from "react-redux"; // Uncomment if you need to dispatch actions
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const links = [
     { title: "Home", link: "/" },
     { title: "All Books", link: "/allbooks" },
-    { title: "Cart", link: "/cart" },
-    { title: "Profile", link: "/profile" },
+    ...(isLoggedIn ? [
+      { title: "Cart", link: "/cart" },
+      { title: "Profile", link: "/profile" },
+    ] : [])
   ];
-   const isLoggedIn= useSelector(state => state.auth.isLoggedIn);
-   if(isLoggedIn==false){
-    links.splice(2,2); // Remove Cart and Profile links if user is logged in
-  } 
-  // const role = useSelector((state) => state.auth.role);
-  // const user = useSelector((state) => state.auth.user);
+
   return (
     <nav className="bg-zinc-800 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -39,7 +36,6 @@ export default function Navbar() {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 {isOpen ? (
                   <path
@@ -71,18 +67,22 @@ export default function Navbar() {
                 {item.title}
               </a>
             ))}
-            <a
-              href="/login"
-              className="px-3 py-1 border border-white rounded hover:text-blue-500 hover:border-blue-500 transition duration-300"
-            >
-              Login
-            </a>
-            <a
-              href="/signup"
-              className="px-3 py-1 border border-white rounded hover:text-blue-500 hover:border-blue-500 transition duration-300"
-            >
-              SignUp
-            </a>
+            {!isLoggedIn && (
+              <>
+                <a
+                  href="/login"
+                  className="px-3 py-1 border border-white rounded hover:text-blue-500 hover:border-blue-500 transition duration-300"
+                >
+                  Login
+                </a>
+                <a
+                  href="/signup"
+                  className="px-3 py-1 border border-white rounded hover:text-blue-500 hover:border-blue-500 transition duration-300"
+                >
+                  SignUp
+                </a>
+              </>
+            )}
           </div>
         </div>
 
@@ -102,21 +102,32 @@ export default function Navbar() {
                 {item.title}
               </a>
             ))}
-            <a
-              href="/login"
-              className="px-3 py-1 border border-white rounded hover:text-blue-400 hover:border-blue-400 transition duration-300"
-            >
-              Login
-            </a>
-            <a
-              href="/signup"
-              className="px-3 py-1 border border-white rounded hover:text-blue-400 hover:border-blue-400 transition duration-300"
-            >
-              SignUp
-            </a>
+            {!isLoggedIn && (
+              <>
+                <a
+                  href="/login"
+                  className="px-3 py-1 border border-white rounded hover:text-blue-500 hover:border-blue-500 transition duration-300"
+                >
+                  Login
+                </a>
+                <a
+                  href="/signup"
+                  className="px-3 py-1 border border-white rounded hover:text-blue-500 hover:border-blue-500 transition duration-300"
+                >
+                  SignUp
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>
     </nav>
   );
 }
+// This code defines a responsive Navbar component using React and Tailwind CSS.
+// It includes a logo, navigation links, and a hamburger menu for mobile view.
+// The links change based on the user's login status, showing "Cart" and "Profile" for logged-in users.
+// The Navbar is styled with a dark background and includes hover effects for better user experience.
+// The mobile menu expands and collapses with a smooth transition when the hamburger icon is clicked.
+// The component uses Redux to check the login status of the user, allowing dynamic rendering of links based on authentication state.
+// The Navbar is designed to be visually appealing and user-friendly, enhancing the overall navigation experience of the application.

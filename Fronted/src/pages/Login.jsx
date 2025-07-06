@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {authActions} from "../store/auth"; // Corrected import path
+import { authActions } from "../store/auth";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux"; // Corrected import from 'react-redux' to 'useDispatch'
+import { useDispatch } from "react-redux";
+
 export default function Login() {
-  const [name, setName] = useState(""); // ✅ Fixed here
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -16,16 +18,24 @@ export default function Login() {
         name,
         password,
       });
-      dispatch(authActions.login({
-        token: res.data.token,  
-        id: res.data.id,
-        name: res.data.name,
-      }));
-      dispatch(authActions.changeRole(response.data.role)) ;// Dispatching login action with user data
+
       if (res.data.token) {
+        // Save to Redux
+        dispatch(
+          authActions.login({
+            token: res.data.token,
+            id: res.data.id,
+            name: res.data.name,
+          })
+        );
+        dispatch(authActions.changeRole(res.data.role)); // ✅ Corrected this line
+
+        // Save to localStorage
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("id", res.data.id);
-        navigate("/profile"); // Redirect to profile page after successful login
+
+        // Navigate
+        navigate("/profile");
       } else {
         alert("Login failed. Please check your credentials.");
       }
@@ -47,7 +57,7 @@ export default function Login() {
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)} // ✅ Fixed setter
+          onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-2 rounded bg-zinc-700 text-white mb-4"
           required
         />
@@ -77,7 +87,6 @@ export default function Login() {
           Login
         </button>
 
-        {/* ✅ Added missing closing tag */}
         <p className="mt-4 text-center text-sm text-gray-400">
           Don't have an account?{" "}
           <a href="/signup" className="text-blue-400 hover:underline">
@@ -88,7 +97,3 @@ export default function Login() {
     </div>
   );
 }
-// This code defines a Login component that allows users to log in by providing their name and password.
-// It uses React's useState hook to manage form state and axios to send a POST request  to the backend API for user authentication.
-// Upon successful login, it stores the token and user ID in localStorage and redirects the user to the home page.
-// If the login fails, it alerts the user with an error message.

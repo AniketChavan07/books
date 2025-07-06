@@ -1,23 +1,43 @@
-import {createSlice} from '@reduxjs/toolkit';// This code initializes a Redux slice for authentication management in a React application.
-const authslice = createSlice({// It defines the initial state and reducers for login, logout, and role change.
-    name: 'auth',// The name of the slice, used to identify it in the Redux store
-    initialState: {     // The initial state of the slice
-      role:"user",// Default role is set to "user"
-    isLoggedIn: false,// Indicates whether the user is logged in or not
+import { createSlice } from '@reduxjs/toolkit';
+
+// Load auth state from localStorage (if available)
+const savedAuth = JSON.parse(localStorage.getItem("auth")) || {
+  isLoggedIn: false,
+  token: null,
+  id: null,
+  name: null,
+  role: null,
+};
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState: savedAuth,
+  reducers: {
+    login: (state, action) => {
+      state.isLoggedIn = true;
+      state.token = action.payload.token;
+      state.id = action.payload.id;
+      state.name = action.payload.name;
+      localStorage.setItem("auth", JSON.stringify(state)); // Save to localStorage
     },
-    reducers: {// Reducers are functions that handle state changes
-        login(state) {// This reducer sets the isLoggedIn state to true when the user logs in
-            
-            state.isLoggedIn= true;// Update the isLoggedIn state to true
-        },
-        logout(state) {// This reducer sets the isLoggedIn state to false when the user logs out
-          
-            state.isLoggedIn = false;// Update the isLoggedIn state to false
-        },
-        changeRole(state, action) {// This reducer changes the user's role based on the action payload
-            state.role = action.payload; // Update the role based on the payload
-        }
+    logout: (state) => {
+      state.isLoggedIn = false;
+      state.token = null;
+      state.id = null;
+      state.name = null;
+      state.role = null;
+      localStorage.removeItem("auth"); // Remove from localStorage
     },
+    changeRole: (state, action) => {
+      state.role = action.payload;
+      localStorage.setItem("auth", JSON.stringify(state)); // Update localStorage
+    },
+  },
 });
-export const authActions = authslice.actions; // Export the actions for use in components
-export default authslice.reducer; // Export the reducer to be used in the store
+
+export const authActions = authSlice.actions;
+export default authSlice.reducer;
+// This code defines a Redux slice for authentication state management in a React application.
+// It includes actions for logging in, logging out, and changing the user's role.               
+// The initial state is loaded from localStorage if available, ensuring persistence across sessions.
+// The `login` action updates the state with user details and saves it to localStorage.
