@@ -16,25 +16,33 @@ function Sidebar({ data }) {
       <p className="text-sm text-gray-400 mb-4">{data.email}</p>
 
       {/* Navigation Links */}
-      <div className="flex flex-col gap-3 w-full mt-6 text-left">
+      <hr className="w-full border-gray-700 my-6" />
+      <div className="flex flex-col  w-full items-center justify-center hidden lg:flex">
         <Link
-          to="/profile/favourites"
-          className="text-white hover:text-blue-400 transition duration-200"
+          to="/profile"
+          className="text-zinc-100 font-semibold w-full py-4 text-center hover:bg-zinc-900 rounded transition all  "
         >
+          Favourites
         </Link>
 
         <Link
-          to="/profile/orders"
-          className="text-white hover:text-blue-400 transition duration-200"
+          to="/profile/orderHistory"
+          className="text-zinc-100 font-semibold w-full py-4 text-center hover:bg-zinc-900 rounded transition all "
         >
+          Order History
         </Link>
 
         <Link
           to="/profile/settings"
-          className="text-white hover:text-blue-400 transition duration-200"
+          className="text-zinc-100 font-semibold w-full py-4 text-center hover:bg-zinc-900 rounded transition all "
         >
+          Settings
         </Link>
       </div>
+      <button className="mt-6 bg-zinc-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-all w-full">
+        Log Out
+
+      </button>
     </div>
   );
 }
