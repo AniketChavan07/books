@@ -57,7 +57,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">{/*this div container that holds all the navigation links for desktop view*/}
             {links.map((item, i) => (
               <a
                 key={i}
