@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function Sidebar({ data }) {
   return (
-    <div className="bg-zinc-800 p-6 rounded-lg flex flex-col items-center text-center w-full h-full">
+    <div className="bg-zinc-800 p-6 rounded-lg flex flex-col items-center text-center w-full h-full ">
       {/* Profile Picture */}
       <img
         src={data.avatar}

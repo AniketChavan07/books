@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function Bookcard({ data }) {
+export default function Bookcard({ data, favourites, cart, onRemove }) {
   if (!data) return null;
 
   return (
@@ -15,7 +15,6 @@ export default function Bookcard({ data }) {
       {/* Book details */}
       <h2 className="text-xl text-white font-bold mt-2">{data.title}</h2>
       <p className="text-gray-300">By {data.author}</p>
-      <p className="text-gray-400 text-sm mt-1">{data.description}</p>
       <p className="text-green-400 font-semibold mt-2">₹{data.price}</p>
       <p className="text-gray-500 text-sm">{data.language}</p>
 
@@ -26,6 +25,30 @@ export default function Bookcard({ data }) {
       >
         View Details
       </Link>
-    </div>
+
+   {favourites && onRemove && (
+  <div className="mt-3">
+    <button
+      onClick={() => onRemove(data._id)}
+      className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
+    >
+      Remove from Favourites
+    </button>
+  </div>
+)}
+
+{cart && onRemove && (
+  <div className="mt-3">
+    <button
+      onClick={() => onRemove(data._id)}
+      className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
+    >
+      Remove from Cart
+    </button>
+  </div>
+)}
+
+
+ </div>
   );
 }
