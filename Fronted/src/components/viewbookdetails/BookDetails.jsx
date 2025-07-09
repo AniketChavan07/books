@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { FaHeart, FaShoppingCart } from "react-icons/fa";
-import { useSelector } from "react-redux"; // ✅ Import
+import { FaHeart, FaShoppingCart, FaEdit, FaTrash } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export default function BookDetails() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
 
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn); // ✅ Check login state
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userRole = useSelector((state) => state.auth.role);
+  const userId = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     axios
@@ -23,6 +28,60 @@ export default function BookDetails() {
         setLoading(false);
       });
   }, [id]);
+
+  const handleAddToFavorites = async () => {
+    try {
+      const headers = {
+        id: userId,
+        bookid: id,
+        authorization: `Bearer ${token}`,
+      };
+
+      console.log("Sending headers:", headers);
+
+      const response = await axios.put(
+        `http://localhost:3002/api/v1/add-book-favourite`,
+        {},
+        { headers }
+      );
+
+      if (response.data.message.includes("already")) {
+        alert("Book is already in favorites");
+      } else {
+        alert("Book added to favorites!");
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      alert("Failed to add to favorites.");
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      const headers = {
+        id: userId,
+        bookid: id,
+        authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.put(
+        `http://localhost:3002/api/v1/add-book-cart`,
+        {},
+        { headers }
+      );
+
+      if (response.data.message.includes("already")) {
+        alert("Book is already in cart");
+      } else {
+        alert("Book added to cart!");
+        setIsInCart(true);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add to cart.");
+    }
+  };
 
   if (loading) {
     return (
@@ -47,7 +106,6 @@ export default function BookDetails() {
     <div className="min-h-screen bg-zinc-900 px-4 md:px-16 py-12 text-white flex justify-center">
       <div className="max-w-6xl w-full">
         <div className="flex flex-col md:flex-row gap-10">
-          {/* Book Image */}
           <div className="w-full md:w-1/2 flex justify-center md:justify-start">
             <img
               src={book.url}
@@ -56,7 +114,6 @@ export default function BookDetails() {
             />
           </div>
 
-          {/* Book Details */}
           <div className="w-full md:w-1/2 flex flex-col gap-4">
             <h1 className="text-3xl md:text-4xl font-bold">{book.title}</h1>
             <p className="text-lg text-gray-300">By {book.author}</p>
@@ -64,20 +121,33 @@ export default function BookDetails() {
             <p className="text-green-400 text-xl font-semibold">Price: ₹{book.price}</p>
             <p className="text-gray-400">Language: {book.language}</p>
 
-            {/* Show buttons only if user is logged in */}
             {isLoggedIn && (
               <div className="flex flex-wrap gap-4 mt-6">
                 <button
                   className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition"
-                  onClick={() => alert("Added to favorites")}
+                  onClick={handleAddToFavorites}
+                  disabled={isFavorite}
                 >
-                  <FaHeart /> Favorite
+                  <FaHeart /> {isFavorite ? "Favorited" : "Favorite"}
                 </button>
+
                 <button
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
-                  onClick={() => alert("Added to cart")}
+                  onClick={handleAddToCart}
+                  disabled={isInCart}
                 >
-                  <FaShoppingCart /> Add to Cart
+                  <FaShoppingCart /> {isInCart ? "Added" : "Add to Cart"}
+                </button>
+              </div>
+            )}
+
+            {userRole === "admin" && (
+              <div className="flex gap-4 mt-4">
+                <button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded transition">
+                  <FaEdit /> Edit
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 bg-red-800 hover:bg-red-900 text-white rounded transition">
+                  <FaTrash /> Delete
                 </button>
               </div>
             )}
