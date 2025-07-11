@@ -1,7 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const MobileView = () => {
+  const role = useSelector((state) => state.auth.role);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  if (!isLoggedIn || role === 'admin') {
+    return null; // Don't show this section to guests or admins
+  }
+
   return (
     <div className="flex lg:hidden flex-col gap-4 w-full bg-zinc-900 text-white p-6">
       <Link
