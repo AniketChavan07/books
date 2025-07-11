@@ -1,7 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../store/auth'; // Adjust the import path as necessary
 
 function Sidebar({ data }) {
+  const dispatch = useDispatch();
+  const history =useNavigate();
   return (
     <div className="bg-zinc-800 p-6 rounded-lg flex flex-col items-center text-center w-full h-full ">
       {/* Profile Picture */}
@@ -39,7 +43,17 @@ function Sidebar({ data }) {
           Settings
         </Link>
       </div>
-      <button className="mt-6 bg-zinc-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-all w-full">
+      <button className="mt-6 bg-zinc-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-all w-full"
+        onClick={() => {
+          dispatch(authActions.logout());
+          // Clear local storage  
+          dispatch(authActions.changeRole('user'));
+          localStorage.removeItem('token'); 
+          localStorage.removeItem('id');
+          localStorage.removeItem('role');
+          history('/');
+        }}
+        >
         Log Out
 
       </button>

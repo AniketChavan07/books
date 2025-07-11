@@ -4,14 +4,20 @@ import { useSelector } from "react-redux";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const role = useSelector((state) => state.auth.role);
 
   const links = [
     { title: "Home", link: "/" },
     { title: "All Books", link: "/allbooks" },
-    ...(isLoggedIn ? [
-      { title: "Cart", link: "/cart" },
-      { title: "Profile", link: "/profile" },
-    ] : [])
+    ...(isLoggedIn
+      ? [
+          { title: "Cart", link: "/cart" },
+          {
+            title: role === "admin" ? "Admin Profile" : "Profile",
+            link: "/profile",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -57,7 +63,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-6">{/*this div container that holds all the navigation links for desktop view*/}
+          <div className="hidden md:flex items-center gap-6">
             {links.map((item, i) => (
               <a
                 key={i}
@@ -124,10 +130,3 @@ export default function Navbar() {
     </nav>
   );
 }
-// This code defines a responsive Navbar component using React and Tailwind CSS.
-// It includes a logo, navigation links, and a hamburger menu for mobile view.
-// The links change based on the user's login status, showing "Cart" and "Profile" for logged-in users.
-// The Navbar is styled with a dark background and includes hover effects for better user experience.
-// The mobile menu expands and collapses with a smooth transition when the hamburger icon is clicked.
-// The component uses Redux to check the login status of the user, allowing dynamic rendering of links based on authentication state.
-// The Navbar is designed to be visually appealing and user-friendly, enhancing the overall navigation experience of the application.
