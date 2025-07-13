@@ -45,7 +45,7 @@ router.put("/place-order", authenticate, async (req, res) => {
 });
 
 // get orders of a particular user
-router.get("/get-order", authenticate, async (req, res) => {        
+router.get("/get-order-history", authenticate, async (req, res) => {        
     try {
         const { id } = req.headers; // Get user ID from headers
         const userData = await User.findById(id).populate({
@@ -69,11 +69,9 @@ router.get("/get-order", authenticate, async (req, res) => {
 router.get("/get-all-orders", authenticate, async (req, res) => {
   try {
     const orders = await Order.find()
-      .sort({ createdAt: -1 }) // Sort orders by creation date (newest first)
-      .populate({
-        path: "book",           // Populate book data in each order
-        populate: { path: "user" } // If each book has a user (like uploader), populate that too (optional)
-      });
+      .sort({ createdAt: -1 })
+      .populate("user")      // populate the user who placed the order
+      .populate("books");    // populate the books in the order
 
     return res.status(200).json({
       message: "All orders fetched successfully",
