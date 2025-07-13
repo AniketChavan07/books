@@ -1,82 +1,144 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Loader from '../components/loader/Loader';
+import { FaUser } from 'react-icons/fa';
 
 function AllOrders() {
-  const [orders, setOrders] = useState(null);
-  const [error, setError] = useState('');
+  const [allOrders, setAllOrders] = useState();
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const headers = {
     id: localStorage.getItem('id'),
-    authorization: `Bearer ${localStorage.getItem('token')}`,
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
   };
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/v1/get-all-orders', {
-          headers,
-        });
-        setOrders(response.data.orders);
+        const response = await axios.get('http://localhost:3002/api/v1/get-all-orders', { headers });
+        setAllOrders(response.data.orders);
       } catch (err) {
-        console.error('Failed to fetch orders:', err);
-        setError('Something went wrong while fetching orders');
+        console.error('Error fetching orders:', err);
       }
     };
     fetch();
   }, []);
 
-  if (!orders && !error) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-zinc-900 text-white">
-        <Loader />
-      </div>
-    );
-  }
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-zinc-900 text-red-500">
-        {error}
-      </div>
-    );
-  }
+  const closeModal = () => {
+    setSelectedUser(null);
+    setShowModal(false);
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await axios.put(`http://localhost:3002/api/v1/update-order-status/${orderId}`, { status: newStatus }, { headers });
+      setAllOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)));
+    } catch (error) {
+      console.error('Failed to update status:', error);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-white px-6 py-10">
-      <h1 className="text-4xl font-bold mb-8 text-center">All Orders</h1>
+    <>
+      {!allOrders ? (
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      ) : allOrders.length > 0 ? (
+        <div className="min-h-screen bg-zinc-900 px-6 py-8 text-zinc-100">
+          <h1 className="text-3xl md:text-5xl font-semibold text-zinc-500 mb-8">
+            All Orders
+          </h1>
 
-      {orders.length === 0 ? (
-        <div className="text-center text-gray-400">No orders found.</div>
-      ) : (
-        <div className="space-y-10 max-w-5xl mx-auto">
-          {orders.map((order, index) => (
+          <div className="bg-zinc-800 w-full rounded py-2 px-4 flex gap-2 font-bold border-b border-zinc-700">
+            <div className="w-[5%] text-center">#</div>
+            <div className="w-[20%]">User</div>
+            <div className="w-[35%]">Book(s)</div>
+            <div className="w-[10%] text-center">Total</div>
+            <div className="w-[15%] text-center">Status</div>
+            <div className="w-[5%] text-center">Info</div>
+          </div>
+
+          {allOrders.map((order, i) => (
             <div
               key={order._id}
-              className="bg-zinc-800 p-6 rounded-xl shadow-lg border border-zinc-700"
+              className="bg-zinc-800 w-full rounded py-2 px-4 flex gap-2 my-2 border border-zinc-700"
             >
-              <h2 className="text-2xl font-semibold mb-4">Order #{index + 1}</h2>
-              
-              {order.books.map((book, i) => (
-                <div key={book._id || i} className="bg-zinc-700 rounded-lg p-4 mb-4">
-                  <p><span className="font-semibold text-gray-300">Title:</span> {book.title}</p>
-                  <p><span className="font-semibold text-gray-300">Author:</span> {book.author}</p>
-                  <p><span className="font-semibold text-gray-300">Description:</span> {book.description}</p>
-                  <p><span className="font-semibold text-gray-300">Language:</span> {book.language}</p>
-                  <p><span className="font-semibold text-gray-300">Price:</span> ₹{book.price}</p>
-                </div>
-              ))}
+              <div className="w-[5%] text-center">{i + 1}</div>
+              <div className="w-[20%]">{order.user?.name || 'Unknown'}</div>
+              <div className="w-[35%] text-sm text-zinc-300">
+                {order.books.map((book) => (
+                  <div key={book._id} className="mb-2">
+                    <p className="font-semibold text-white">{book.title}</p>
+                    <p className="text-zinc-400 text-sm">{book.description}</p>
+                    <p className="text-zinc-400 text-xs">Lang: {book.language}</p>
+                    <p className="text-green-400">₹{book.price}</p>
+                    <hr className="my-1 border-zinc-600" />
+                  </div>
+                ))}
+              </div>
+              <div className="w-[10%] text-center">₹{order.totalAmount}</div>
+              <div className="w-[15%] text-center">
+                <select
+  value={order.status}
+  onChange={(e) => handleStatusChange(order._id, e.target.value)}
+  className={`px-2 py-1 rounded text-sm font-semibold transition duration-300
+    ${
+      order.status === "Placed"
+        ? "bg-yellow-500 text-black"
+        : order.status === "Delivered"
+        ? "bg-green-500 text-white"
+        : "bg-red-500 text-white"
+    }`}
+>
+  <option value="Placed" className="bg-zinc-900 text-white">Placed</option>
+  <option value="Delivered" className="bg-zinc-900 text-white">Delivered</option>
+  <option value="Cancelled" className="bg-zinc-900 text-white">Cancelled</option>
+</select>
 
-              <div className="mt-2">
-                <p><span className="font-semibold text-gray-300">Total Amount:</span> ₹{order.totalAmount}</p>
-                <p><span className="font-semibold text-gray-300">Status:</span> {order.status}</p>
-                <p><span className="font-semibold text-gray-300">Date:</span> {new Date(order.createdAt).toLocaleString()}</p>
+         
+              </div>
+              <div className="w-[5%] flex justify-center">
+                <button onClick={() => handleViewUser(order.user)}>
+                  <FaUser className="text-blue-400 hover:text-blue-600 text-lg" />
+                </button>
               </div>
             </div>
           ))}
+
+          {showModal && selectedUser && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white text-black rounded-lg p-6 w-full max-w-md">
+                <h2 className="text-2xl font-semibold mb-4">User Details</h2>
+                <p><strong>Name:</strong> {selectedUser.name}</p>
+                <p><strong>Email:</strong> {selectedUser.email}</p>
+                <p><strong>Phone:</strong> {selectedUser.phone || 'N/A'}</p>
+                <p><strong>Address:</strong> {selectedUser.address || 'N/A'}</p>
+
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-screen text-white">
+          No orders found.
         </div>
       )}
-    </div>
+    </>
   );
 }
 

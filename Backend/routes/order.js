@@ -4,45 +4,41 @@ const Book = require("../models/book");     // Import Book model
 const User = require("../models/user");     // Import User model
 const authenticate = require("./userAuth"); // Import authentication middleware
 
-// place an order
 router.put("/place-order", authenticate, async (req, res) => {
   try {
-    const { id } = req.headers;      // Get user ID from headers
-    const { order } = req.body;      // Get order array from request body
+    const { id } = req.headers;
+    const { bookId, totalAmount } = req.body;
 
-    for (const orderData of order) {
-      // Optional: You may verify book exists before placing order
-      const book = await Book.findById(orderData._id);
-      if (!book) {
-        return res.status(404).json({ message: `Book with ID ${orderData._id} not found` });
-      }
-
-      // Create a new order
-      const newOrder = new Order({
-        user: id,
-        book: orderData._id,
-      });
-
-      const savedOrder = await newOrder.save();
-
-      // Add the new order ID to user's orders
-      await User.findByIdAndUpdate(id, {
-        $push: { orders: savedOrder._id }
-      });
-
-      // Remove the ordered book from user's cart
-      await User.findByIdAndUpdate(id, {
-        $pull: { cart: orderData._id }
-      });
+    // Check if book exists
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
     }
 
-    return res.status(200).json({ message: "Order(s) placed successfully" });
+    // Create a new order
+    const newOrder = new Order({
+      user: id,
+      books: [bookId],
+      totalAmount: totalAmount,
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // Update user document
+    await User.findByIdAndUpdate(id, {
+      $push: { orders: savedOrder._id },
+      $pull: { cart: bookId },
+    });
+
+    return res.status(200).json({ message: "Order placed successfully", order: savedOrder });
 
   } catch (error) {
-    console.error(error); // Log the error
+    console.error("Order placement error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
 
 // get orders of a particular user
 router.get("/get-order-history", authenticate, async (req, res) => {        
@@ -87,15 +83,27 @@ router.get("/get-all-orders", authenticate, async (req, res) => {
 });
 
 //update order status by admin
-router.put("/update-order-status", authenticate, async (req, res) => {
-    try{
-        const{id}=req.params; // Get order ID from request parameters
-        await Order.findByIdAndUpdate(id,req.body); // Update order status with request body
-        return res.status(200).json({message:"Order status updated successfully"}); // Return success message   
+router.put("/update-order-status/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
     }
-    catch(error){
-        console.error(error); // Log the error
-        return res.status(500).json({ message: "Something went wrong", error });
-    }
+
+    res.status(200).json({ message: "Order status updated", order: updatedOrder });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
+
+
 module.exports = router;

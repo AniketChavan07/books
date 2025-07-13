@@ -11,6 +11,7 @@ export default function BookDetails() {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
+  const [isOrdering, setIsOrdering] = useState(false);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userRole = useSelector((state) => state.auth.role);
@@ -29,6 +30,36 @@ export default function BookDetails() {
         setLoading(false);
       });
   }, [id]);
+
+  const handlePlaceOrder = async () => {
+    try {
+      setIsOrdering(true);
+      const headers = {
+            id: localStorage.getItem('id'),
+
+        Authorization: `Bearer ${token}`,
+      };
+
+      const body = {
+        userId,
+        bookId: book._id,
+        totalAmount: book.price,
+      };
+
+      const res = await axios.put(
+        "http://localhost:3002/api/v1/place-order",
+        body,
+        { headers }
+      );
+
+      alert("Order placed successfully!");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order.");
+    } finally {
+      setIsOrdering(false);
+    }
+  };
 
   const handleAddToFavorites = async () => {
     try {
@@ -157,6 +188,17 @@ export default function BookDetails() {
                 >
                   <FaShoppingCart /> {isInCart ? "Added" : "Add to Cart"}
                 </button>
+
+                {/* ✅ Place Order Button for users only */}
+                {userRole === "user" && (
+                  <button
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded transition"
+                    onClick={handlePlaceOrder}
+                    disabled={isOrdering}
+                  >
+                    {isOrdering ? "Placing..." : "Place Order"}
+                  </button>
+                )}
               </div>
             )}
 

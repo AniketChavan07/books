@@ -9,8 +9,8 @@ function Hero() {
           Discover Your Next Great Read
         </h1>
         <p className='mt-4 text-base md:text-lg text-zinc-300 text-center lg:text-left'>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique natus explicabo corrupti distinctio amet nesciunt
-        </p>
+          Books are more than just ink on paper they are portals to other worlds, timeless teachers, and faithful companions. Whether you're diving into a thrilling mystery, wandering through ancient civilizations, or learning something entirely new, books have the power to inspire, educate, and transform.   
+            </p>
         <div className='mt-6 flex justify-center lg:justify-start'>
           <button className='text-yellow-100 text-xl font-semibold border border-yellow-100 px-6 md:px-10 py-2 md:py-3 w-fit rounded cursor-pointer transition-all duration-300 hover:bg-yellow-100 hover:text-black border-yellow-500'>
             Discover Books
