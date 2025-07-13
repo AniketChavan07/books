@@ -18,6 +18,7 @@ import AllOrders from './pages/AllOrders';
 import Favourites from './components/profile/Favourites';
 import UserOrderHistory from './components/profile/UserOrderHistory';
 import Setting from './components/profile/Setting';
+import UpdateBook from './pages/UpdateBook';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -44,6 +45,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/book/:id" element={<BookDetails />} />
+        <Route path="/updateBook/:id" element={<UpdateBook />} />
+
 
         {/* Nested Profile Routes */}
         <Route path="/profile" element={<Profile />}>
@@ -69,6 +72,7 @@ export default function App() {
               <Route path="settings" element={<Setting />} />
             </>
           )}
+
         </Route>
       </Routes>
       <Footer />

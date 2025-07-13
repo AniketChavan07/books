@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaHeart, FaShoppingCart, FaEdit, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 export default function BookDetails() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,8 +37,6 @@ export default function BookDetails() {
         bookid: id,
         authorization: `Bearer ${token}`,
       };
-
-      console.log("Sending headers:", headers);
 
       const response = await axios.put(
         `http://localhost:3002/api/v1/add-book-favourite`,
@@ -80,6 +79,26 @@ export default function BookDetails() {
     } catch (error) {
       console.error("Error adding to cart:", error);
       alert("Failed to add to cart.");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const headers = {
+        authorization: `Bearer ${token}`,
+        bookid: id,
+      };
+
+      const response = await axios.delete(
+        `http://localhost:3002/api/v1/delete-book`,
+        { headers }
+      );
+
+      alert(response.data.message);
+      navigate("/allbooks");
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      alert("Failed to delete the book.");
     }
   };
 
@@ -143,10 +162,16 @@ export default function BookDetails() {
 
             {userRole === "admin" && (
               <div className="flex gap-4 mt-4">
-                <button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded transition">
+                <button
+                  className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded transition"
+                  onClick={() => navigate(`/updatebook/${id}`)}
+                >
                   <FaEdit /> Edit
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-red-800 hover:bg-red-900 text-white rounded transition">
+                <button
+                  className="flex items-center gap-2 px-4 py-2 bg-red-800 hover:bg-red-900 text-white rounded transition"
+                  onClick={handleDelete}
+                >
                   <FaTrash /> Delete
                 </button>
               </div>

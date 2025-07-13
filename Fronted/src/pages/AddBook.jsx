@@ -34,13 +34,13 @@ const AddBook = () => {
         bookData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            id: localStorage.getItem('id'),
+            authorization: `Bearer ${localStorage.getItem('token')}`,
           }
         }
       );
 
-      setSuccess('✅ Book added successfully!');
+      setSuccess(' Book added successfully!');
       setBookData({
         title: '',
         author: '',
@@ -51,7 +51,7 @@ const AddBook = () => {
       });
     } catch (err) {
       console.error('Error adding book:', err);
-      setError('❌ Failed to add book. Please check the console or try again.');
+      setError(' Failed to add book. Please check the console or try again.');
     } finally {
       setLoading(false);
     }
