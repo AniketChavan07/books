@@ -20,7 +20,7 @@ export default function BookDetails() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3002/api/v1/get-book-id/${id}`)
+      .get(`https://bookclub-3msp.onrender.com/api/v1/get-book-id/${id}`)
       .then((res) => {
         setBook(res.data.data);
         setLoading(false);
@@ -47,7 +47,7 @@ export default function BookDetails() {
       };
 
       const res = await axios.put(
-        "http://localhost:3002/api/v1/place-order",
+        "https://bookclub-3msp.onrender.com/api/v1/place-order",
         body,
         { headers }
       );
@@ -72,7 +72,7 @@ navigate("/profile/orderHistory", { state: { refresh: true } });
       };
 
       const response = await axios.put(
-        `http://localhost:3002/api/v1/add-book-favourite`,
+        `https://bookclub-3msp.onrender.com/api/v1/add-book-favourite`,
         {},
         { headers }
       );
@@ -98,7 +98,7 @@ navigate("/profile/orderHistory", { state: { refresh: true } });
       };
 
       const response = await axios.put(
-        `http://localhost:3002/api/v1/add-book-cart`,
+        `https://bookclub-3msp.onrender.com/api/v1/add-book-cart`,
         {},
         { headers }
       );
@@ -123,7 +123,7 @@ navigate("/profile/orderHistory", { state: { refresh: true } });
       };
 
       const response = await axios.delete(
-        `http://localhost:3002/api/v1/delete-book`,
+        `https://bookclub-3msp.onrender.com/api/v1/delete-book`,
         { headers }
       );
 

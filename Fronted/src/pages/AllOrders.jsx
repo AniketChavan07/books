@@ -16,7 +16,7 @@ function AllOrders() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/v1/get-all-orders', { headers });
+        const response = await axios.get('https://bookclub-3msp.onrender.com/api/v1/get-all-orders', { headers });
         setAllOrders(response.data.orders);
       } catch (err) {
         console.error('Error fetching orders:', err);
@@ -37,7 +37,7 @@ function AllOrders() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`http://localhost:3002/api/v1/update-order-status/${orderId}`, { status: newStatus }, { headers });
+      await axios.put(`https://bookclub-3msp.onrender.com/api/v1/update-order-status/${orderId}`, { status: newStatus }, { headers });
       setAllOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)));
     } catch (error) {
       console.error('Failed to update status:', error);

@@ -17,7 +17,7 @@ function Setting() {
   const fetchProfile = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:3002/api/v1/get-user-information',
+        'https://bookclub-3msp.onrender.com/api/v1/get-user-information',
         { headers }
       );
       setProfileData(response.data);
@@ -37,7 +37,7 @@ function Setting() {
     setLoading(true);
     try {
       const res = await axios.put(
-        'http://localhost:3002/api/v1/update-address',
+        'https://bookclub-3msp.onrender.com/api/v1/update-address',
         { address: value.address },
         { headers }
       );

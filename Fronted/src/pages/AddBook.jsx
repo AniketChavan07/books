@@ -30,7 +30,7 @@ const AddBook = () => {
       const token = localStorage.getItem('token');
 
       const res = await axios.post(
-        'http://localhost:3002/api/v1/add-book',
+        'https://bookclub-3msp.onrender.com/api/v1/add-book',
         bookData,
         {
           headers: {

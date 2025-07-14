@@ -14,7 +14,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3002/api/v1/sign-in", {
+      const res = await axios.post("https://bookclub-3msp.onrender.com/api/v1/sign-in", {
         name,
         password,
       });

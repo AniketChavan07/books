@@ -13,7 +13,7 @@ function Favourites() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get("http://localhost:3002/api/v1/get-favourite-book", {
+        const response = await axios.get("https://bookclub-3msp.onrender.com/api/v1/get-favourite-book", {
           headers,
         });
         setFavourites(response.data.favourites);
@@ -27,7 +27,7 @@ function Favourites() {
   const handleRemove = async (bookId) => {
     try {
       await axios.put(
-        `http://localhost:3002/api/v1/delete-book-favourite`,
+        `https://bookclub-3msp.onrender.com/api/v1/delete-book-favourite`,
         {},
         {
           headers: {

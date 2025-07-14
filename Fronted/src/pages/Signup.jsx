@@ -23,7 +23,7 @@ export default function Signup() {
 
     try {
       console.log("Sending user data:", user); // Debug log
-      const res = await axios.post("http://localhost:3002/api/v1/sign-up", user);
+      const res = await axios.post("https://bookclub-3msp.onrender.com/api/v1/sign-up", user);
 
       if (res.status === 200 || res.status === 201) {
         alert("Signup successful. Please login.");

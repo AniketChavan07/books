@@ -13,7 +13,7 @@ function Cart() {
   // Fetch cart
   const fetchCart = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/api/v1/get-cart-book", { headers });
+      const response = await axios.get("https://bookclub-3msp.onrender.com/api/v1/get-cart-book", { headers });
       setCartItems(response.data.cart);
     } catch (error) {
       console.error("Failed to fetch cart items:", error);
@@ -23,7 +23,7 @@ function Cart() {
   // Remove book from cart
   const handleRemoveFromCart = async (bookId) => {
     try {
-      await axios.put(`http://localhost:3002/api/v1/delete-book-cart/${bookId}`, {}, { headers });
+      await axios.put(`https://bookclub-3msp.onrender.com/api/v1/delete-book-cart/${bookId}`, {}, { headers });
       fetchCart(); // Refresh after deletion
     } catch (error) {
       console.error("Failed to remove book from cart:", error);

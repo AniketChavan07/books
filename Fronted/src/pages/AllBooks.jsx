@@ -10,7 +10,7 @@ function AllBooks() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get("http://localhost:3002/api/v1/get-book");
+        const response = await axios.get("https://bookclub-3msp.onrender.com/api/v1/get-book");
         console.log("Fetched books:", response.data.data);
         setData(response.data.data);
       } catch (error) {

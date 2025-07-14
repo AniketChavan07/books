@@ -17,7 +17,7 @@ function UserOrderHistory() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/v1/get-order-history', {
+        const response = await axios.get('https://bookclub-3msp.onrender.com/api/v1/get-order-history', {
           headers,
         });
         setOrderHistory(response.data.data || []);
