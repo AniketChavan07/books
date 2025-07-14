@@ -58,6 +58,8 @@ export default function BookDetails() {
       alert("Failed to place order.");
     } finally {
       setIsOrdering(false);
+navigate("/profile/orderHistory", { state: { refresh: true } });
+
     }
   };
 

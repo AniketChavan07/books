@@ -87,15 +87,31 @@ router.get("/get-user-information",authenticate, async (req, res) => {
 // Update user details
 router.put("/update-address", authenticate, async (req, res) => {
   try {
-    const { id } = req.headers; // Assuming the user ID is passed as a header
+    const { id } = req.headers;
     const { address } = req.body;
 
-    await User.findById(id,{address:address});
-    return res.status(200).json({ message: "Address update sucessfully" });
+    if (!address || address.trim() === "") {
+      return res.status(400).json({ message: "Address is required" });
+    }
 
-     } catch (error) {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { address: address },
+      { new: true } // returns the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "Address updated successfully",
+      data: updatedUser, // optional: send back updated data
+    });
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
 module.exports = router;

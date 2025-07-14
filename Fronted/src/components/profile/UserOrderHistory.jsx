@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Loader from '../loader/Loader'; // Adjust path if needed
+import { useLocation } from 'react-router-dom'; // ✅ Added this line
 
 function UserOrderHistory() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const location = useLocation(); // ✅ Get state from navigation
 
   const headers = {
     id: localStorage.getItem('id'),
@@ -25,8 +28,13 @@ function UserOrderHistory() {
       }
     };
 
-    fetchOrders();
-  }, []);
+    // ✅ Trigger fetch on refresh flag
+    if (location.state?.refresh) {
+      fetchOrders();
+    } else {
+      fetchOrders();
+    }
+  }, [location.state]); // ✅ React when `navigate(..., { state })` changes
 
   if (loading) {
     return (

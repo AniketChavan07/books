@@ -41,26 +41,25 @@ router.put("/place-order", authenticate, async (req, res) => {
 
 
 // get orders of a particular user
-router.get("/get-order-history", authenticate, async (req, res) => {        
-    try {
-        const { id } = req.headers; // Get user ID from headers
-        const userData = await User.findById(id).populate({
-            path: 'orders', // Populate the orders field
-            populate: {path: 'book'} // Populate the book field within orders   
-        }); // Find user by ID and populate orders
-    const orderData = userData.orders.reverse();
+router.get("/get-order-history", authenticate, async (req, res) => {
+  try {
+    const { id } = req.headers;
+
+    // Get the user's orders directly from the Order model
+    const orderData = await Order.find({ user: id }) // Assuming 'user' field stores userId
+      .populate("books") // Populate book info in each order
+      .sort({ createdAt: -1 }); // Sort by newest first
+
     return res.json({
-        status: "success",
-        data: orderData, // Return the populated orders
-     }) ;// Get the orders from user data
-    
-    
-    } 
-    catch (error) {
-        console.error(error); // Log the error
-           return res.status(500).json({ message: "Something went wrong", error });
-    }
+      status: "success",
+      data: orderData,
     });
+  } catch (error) {
+    console.error("Error in get-order-history:", error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+});
+
   // Get all orders
 router.get("/get-all-orders", authenticate, async (req, res) => {
   try {

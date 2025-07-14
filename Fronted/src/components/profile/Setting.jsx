@@ -13,25 +13,26 @@ function Setting() {
     authorization: `Bearer ${localStorage.getItem('token')}`,
   };
 
-  // Fetch user data
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(
-          'http://localhost:3002/api/v1/get-user-information',
-          { headers }
-        );
-        setProfileData(response.data);
-        setValue({ address: response.data.address });
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
+  // ✅ Reusable fetchProfile function
+  const fetchProfile = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:3002/api/v1/get-user-information',
+        { headers }
+      );
+      setProfileData(response.data);
+      setValue({ address: response.data.address });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
+  // ✅ Fetch on component mount
+  useEffect(() => {
     fetchProfile();
   }, []);
 
-  // Handle update
+  // ✅ Handle address update
   const handleUpdate = async () => {
     setLoading(true);
     try {
@@ -41,6 +42,7 @@ function Setting() {
         { headers }
       );
       setMessage('Address updated successfully!');
+      await fetchProfile(); // ✅ Re-fetch profile to reflect changes
     } catch (err) {
       console.error(err);
       setMessage('Failed to update address.');
@@ -52,8 +54,7 @@ function Setting() {
   return (
     <>
       {!profileData ? (
-        <div className=" flex items-center justify-center bg-zinc-900 ">
-
+        <div className="flex items-center justify-center bg-zinc-900 min-h-screen">
           <Loader />
         </div>
       ) : (
@@ -63,7 +64,7 @@ function Setting() {
           </h1>
 
           <div className="bg-zinc-800 p-6 rounded-xl shadow-lg w-full max-w-2xl mx-auto">
-            {/* Username */}
+            {/* Name */}
             <div className="mb-4">
               <label className="block text-sm mb-1 font-medium">Name</label>
               <p className="p-2 rounded bg-zinc-700 text-sm font-semibold">
@@ -103,7 +104,7 @@ function Setting() {
               </button>
             </div>
 
-            {/* Message */}
+            {/* Success/Error Message */}
             {message && (
               <p className="mt-4 text-sm text-green-400 font-medium">{message}</p>
             )}
