@@ -16,7 +16,10 @@ function AllOrders() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get('https://bookclub-3msp.onrender.com/api/v1/get-all-orders', { headers });
+        const response = await axios.get(
+          'https://bookclub-3msp.onrender.com/api/v1/get-all-orders',
+          { headers }
+        );
         setAllOrders(response.data.orders);
       } catch (err) {
         console.error('Error fetching orders:', err);
@@ -37,8 +40,14 @@ function AllOrders() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`https://bookclub-3msp.onrender.com/api/v1/update-order-status/${orderId}`, { status: newStatus }, { headers });
-      setAllOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)));
+      await axios.put(
+        `https://bookclub-3msp.onrender.com/api/v1/update-order-status/${orderId}`,
+        { status: newStatus },
+        { headers }
+      );
+      setAllOrders((prev) =>
+        prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
+      );
     } catch (error) {
       console.error('Failed to update status:', error);
     }
@@ -51,12 +60,13 @@ function AllOrders() {
           <Loader />
         </div>
       ) : allOrders.length > 0 ? (
-        <div className="min-h-screen bg-zinc-900 px-6 py-8 text-zinc-100">
-          <h1 className="text-3xl md:text-5xl font-semibold text-zinc-500 mb-8">
+        <div className="min-h-screen bg-zinc-900 px-4 sm:px-6 py-8 text-zinc-100">
+          <h1 className="text-3xl md:text-5xl font-semibold text-zinc-500 mb-6 sm:mb-8">
             All Orders
           </h1>
 
-          <div className="bg-zinc-800 w-full rounded py-2 px-4 flex gap-2 font-bold border-b border-zinc-700">
+          {/* Header Row */}
+          <div className="hidden md:flex bg-zinc-800 rounded py-2 px-4 gap-2 font-bold border-b border-zinc-700">
             <div className="w-[5%] text-center">#</div>
             <div className="w-[20%]">User</div>
             <div className="w-[35%]">Book(s)</div>
@@ -65,14 +75,16 @@ function AllOrders() {
             <div className="w-[5%] text-center">Info</div>
           </div>
 
+          {/* Order Rows */}
           {allOrders.map((order, i) => (
             <div
               key={order._id}
-              className="bg-zinc-800 w-full rounded py-2 px-4 flex gap-2 my-2 border border-zinc-700"
+              className="bg-zinc-800 w-full rounded py-4 px-4 my-4 border border-zinc-700 flex flex-col md:flex-row md:items-center md:gap-2"
             >
-              <div className="w-[5%] text-center">{i + 1}</div>
-              <div className="w-[20%]">{order.user?.name || 'Unknown'}</div>
-              <div className="w-[35%] text-sm text-zinc-300">
+              <div className="md:w-[5%] text-center font-bold mb-2 md:mb-0">{i + 1}</div>
+              <div className="md:w-[20%] font-semibold mb-2 md:mb-0">{order.user?.name || 'Unknown'}</div>
+
+              <div className="md:w-[35%] text-sm text-zinc-300 mb-4 md:mb-0">
                 {order.books.map((book) => (
                   <div key={book._id} className="mb-2">
                     <p className="font-semibold text-white">{book.title}</p>
@@ -83,28 +95,37 @@ function AllOrders() {
                   </div>
                 ))}
               </div>
-              <div className="w-[10%] text-center">₹{order.totalAmount}</div>
-              <div className="w-[15%] text-center">
-                <select
-  value={order.status}
-  onChange={(e) => handleStatusChange(order._id, e.target.value)}
-  className={`px-2 py-1 rounded text-sm font-semibold transition duration-300
-    ${
-      order.status === "Placed"
-        ? "bg-yellow-500 text-black"
-        : order.status === "Delivered"
-        ? "bg-green-500 text-white"
-        : "bg-red-500 text-white"
-    }`}
->
-  <option value="Placed" className="bg-zinc-900 text-white">Placed</option>
-  <option value="Delivered" className="bg-zinc-900 text-white">Delivered</option>
-  <option value="Cancelled" className="bg-zinc-900 text-white">Cancelled</option>
-</select>
 
-         
+              <div className="md:w-[10%] text-center font-semibold mb-2 md:mb-0">
+                ₹{order.totalAmount}
               </div>
-              <div className="w-[5%] flex justify-center">
+
+              <div className="md:w-[15%] text-center mb-2 md:mb-0">
+                <select
+                  value={order.status}
+                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                  className={`px-2 py-1 rounded text-sm font-semibold w-full
+                    ${
+                      order.status === 'Placed'
+                        ? 'bg-yellow-500 text-black'
+                        : order.status === 'Delivered'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-red-500 text-white'
+                    }`}
+                >
+                  <option value="Placed" className="bg-zinc-900 text-white">
+                    Placed
+                  </option>
+                  <option value="Delivered" className="bg-zinc-900 text-white">
+                    Delivered
+                  </option>
+                  <option value="Cancelled" className="bg-zinc-900 text-white">
+                    Cancelled
+                  </option>
+                </select>
+              </div>
+
+              <div className="md:w-[5%] flex justify-center">
                 <button onClick={() => handleViewUser(order.user)}>
                   <FaUser className="text-blue-400 hover:text-blue-600 text-lg" />
                 </button>
@@ -112,14 +133,23 @@ function AllOrders() {
             </div>
           ))}
 
+          {/* User Info Modal */}
           {showModal && selectedUser && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4">
               <div className="bg-white text-black rounded-lg p-6 w-full max-w-md">
                 <h2 className="text-2xl font-semibold mb-4">User Details</h2>
-                <p><strong>Name:</strong> {selectedUser.name}</p>
-                <p><strong>Email:</strong> {selectedUser.email}</p>
-                <p><strong>Phone:</strong> {selectedUser.phone || 'N/A'}</p>
-                <p><strong>Address:</strong> {selectedUser.address || 'N/A'}</p>
+                <p>
+                  <strong>Name:</strong> {selectedUser.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {selectedUser.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {selectedUser.phone || 'N/A'}
+                </p>
+                <p>
+                  <strong>Address:</strong> {selectedUser.address || 'N/A'}
+                </p>
 
                 <div className="flex justify-end mt-6">
                   <button
